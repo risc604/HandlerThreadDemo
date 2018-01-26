@@ -2,6 +2,7 @@ package com.demo.tomcat.handlerthreaddemo;
 
 import android.os.Handler;
 import android.os.Message;
+import android.os.SystemClock;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.widget.TextView;
@@ -27,11 +28,14 @@ public class MainActivity extends AppCompatActivity
     private void initView()
     {
         show = (TextView)findViewById(R.id.show);
+        StringBuffer text = new StringBuffer();
+        text.append("main UI -> " + SystemClock.currentThreadTimeMillis());
+        show.setText(text);
     }
 
     private void initControl()
     {
-        showHandler = new FHandler();
+        showHandler = new Handler();
 
         new Thread_1().start();
         new Thread_2().start();
@@ -59,7 +63,7 @@ public class MainActivity extends AppCompatActivity
 
             }
             show.setText(text);
-            super.handleMessage(msg);
+            //super.handleMessage(msg);
         }
     }
 
@@ -70,19 +74,28 @@ public class MainActivity extends AppCompatActivity
         {
             try
             {
-                Thread.sleep(2000);
+                Thread.sleep(5000);
             }
             catch (InterruptedException e)
             {
                 e.printStackTrace();
             }
 
-            Message msg = Message.obtain();
-            msg.what = 1;
-            msg.obj = "AAA ";
-            showHandler.sendMessage(msg);
+            //Message msg = Message.obtain();
+            //msg.what = 1;
+            //msg.obj = "AAA ";
+            //showHandler.sendMessage(msg);
 
-            super.run();
+            showHandler.post(new Runnable() {
+                @Override
+                public void run() {
+                    String line = "\n";
+                    StringBuffer text = new StringBuffer(show.getText());
+                    text.append(line).append("Thread 1 -> " + SystemClock.currentThreadTimeMillis());
+                    show.setText(text);
+                }
+            });
+            //super.run();
         }
     }
 
@@ -100,12 +113,21 @@ public class MainActivity extends AppCompatActivity
                 e.printStackTrace();
             }
 
-            Message msg = Message.obtain();
-            msg.what = 2;
-            msg.obj = "BBB ";
-            showHandler.sendMessage(msg);
+            //Message msg = Message.obtain();
+            //msg.what = 2;
+            //msg.obj = "BBB ";
+            //showHandler.sendMessage(msg);
+            //super.run();
 
-            super.run();
+            showHandler.post(new Runnable() {
+                @Override
+                public void run() {
+                    String line = "\n";
+                    StringBuffer text = new StringBuffer(show.getText());
+                    text.append(line).append(" Thread 2 -> " + SystemClock.currentThreadTimeMillis());
+                    show.setText(text);
+                }
+            });
         }
 
     }
